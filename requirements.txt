@@ -7,7 +7,7 @@ pillow
 tensorflow-cpu
 scikit-learn
 bcrypt
-deta
+deta==1.1.0
 extra-streamlit-components
 GitPython
 python-dateutil
