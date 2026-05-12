@@ -33,7 +33,7 @@ Pygments
 PyJWT
 Pympler
 pyrsistent
-python-dateuti
+python-dateutil
 python-dotenv
 pytz==2022.7.1
 pytz-deprecation-shim
