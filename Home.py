@@ -2,7 +2,7 @@
 import streamlit as st
 import streamlit_authenticator as sauth
 import os
-from deta import DetaBase
+from deta import Deta
 from dotenv import load_dotenv
 
 # 1. Page Configuration
