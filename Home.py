@@ -69,32 +69,58 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # ==========================================
-# 2. Database & Environment Setup (VERIFIED)
+# 2. Database & Environment Setup (HTTP Fallback)
 # ==========================================
-from deta import Base  # Import the direct class for version 0.2.52
+import requests
 from dotenv import load_dotenv
 
 load_dotenv(".env")
 DETA_KEY = os.getenv("DETA_KEY2")
 
-# Initialize the Base client directly with your key
-db = Base("learnX_main_db", DETA_KEY)
+# Extract the Project ID from your unique DETA_KEY (it is always the first part before the underscore)
+# Example: "a0fghijk_xyz12345" -> Project ID is "a0fghijk"
+PROJECT_ID = DETA_KEY.split("_")[0] if DETA_KEY and "_" in DETA_KEY else ""
+BASE_NAME = "learnX_main_db"
+
+# HTTP Headers required by Deta's Data API
+HEADERS = {
+    "X-API-Key": DETA_KEY,
+    "Content-Type": "application/json"
+}
+
+# Direct HTTP endpoint for your Deta Base storage
+BASE_URL = f"https://database.deta.sh/v1/{PROJECT_ID}/{BASE_NAME}"
 
 def insert_user(username, name, password):
-    return db.put({"key": username, "name": name, "password": password})
+    """Inserts a new user record directly via HTTP POST."""
+    url = f"{BASE_URL}/items"
+    payload = {
+        "item": {
+            "key": username, 
+            "name": name, 
+            "password": password
+        }
+    }
+    response = requests.post(url, headers=HEADERS, json=payload)
+    return response.json() if response.status_code == 201 else None
 
 def fetch_all_users():
+    """Fetches all users directly via HTTP POST query."""
+    url = f"{BASE_URL}/query"
     try:
-        res = db.fetch()
-        return res.items if res.items else []
+        response = requests.post(url, headers=HEADERS, json={})
+        if response.status_code == 200:
+            data = response.json()
+            return data.get("items", [])
     except Exception:
-        # Presentation Fallback
-        return [{
-            "key": "admin", 
-            "name": "Ige Aminat Ayobami", 
-            "password": sauth.Hasher.hash("1234")
-        }]
-
+        pass
+        
+    # Presentation Fallback if credentials or connection fail
+    return [{
+        "key": "admin", 
+        "name": "Ige Aminat Ayobami", 
+        "password": sauth.Hasher.hash("1234")
+    }]
 # 3. Data Processing & Authentication
 users = fetch_all_users()
 credentials = {
