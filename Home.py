@@ -2,7 +2,7 @@
 import streamlit as st
 import streamlit_authenticator as sauth
 import os
-from deta import deta
+import deta as deta_module  # <--- CHANGED THIS
 from dotenv import load_dotenv
 
 # 1. Page Configuration
@@ -70,20 +70,14 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# ==========================================
-# 2. Database & Environment Setup (UPDATED)
-# ==========================================
-import deta as deta_module  # Import the module safely under an alias
-from dotenv import load_dotenv
-
+# 2. Database & Environment Setup
 load_dotenv(".env")
 DETA_KEY = os.getenv("DETA_KEY2")
 
-# Use the module to initialize Deta to bypass the top-level import issue
+# This block handles the version conflict manually
 try:
     deta = deta_module.Deta(DETA_KEY)
 except AttributeError:
-    # Fallback structure for the older legacy package initialization
     from deta import deta as legacy_deta
     deta = legacy_deta.Deta(DETA_KEY)
 
