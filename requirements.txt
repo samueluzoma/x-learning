@@ -1,12 +1,6 @@
 streamlit
-streamlit-authenticator
-deta==1.1.0
-python-dotenv
-tensorflow-cpu>=2.15.0
 pandas
-numpy<2.0.0
+numpy
+scikit-learn
 plotly
-pillow
-extra-streamlit-components
-GitPython
-python-dateutil
+requests
