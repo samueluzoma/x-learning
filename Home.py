@@ -2,7 +2,6 @@
 import streamlit as st
 import streamlit_authenticator as sauth
 import os
-from dotenv import load_dotenv
 
 # 1. Page Configuration
 st.set_page_config(page_title="LearnX | FUOYE AI-LMS", page_icon="🎓", layout="wide")
@@ -70,17 +69,16 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # ==========================================
-# 2. Database & Environment Setup (FINAL FIX)
+# 2. Database & Environment Setup (VERIFIED)
 # ==========================================
+from deta import Base  # Import the direct class for version 0.2.52
+from dotenv import load_dotenv
+
 load_dotenv(".env")
 DETA_KEY = os.getenv("DETA_KEY2")
 
-# Directly import from the internal source file where the engine lives
-from deta.main import Deta as DirectDeta
-
-# Initialize securely
-deta = DirectDeta(DETA_KEY)
-db = deta.Base("learnX_main_db")
+# Initialize the Base client directly with your key
+db = Base("learnX_main_db", DETA_KEY)
 
 def insert_user(username, name, password):
     return db.put({"key": username, "name": name, "password": password})
