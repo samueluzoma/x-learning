@@ -2,7 +2,6 @@
 import streamlit as st
 import streamlit_authenticator as sauth
 import os
-import deta as deta_module  # <--- CHANGED THIS
 from dotenv import load_dotenv
 
 # 1. Page Configuration
@@ -71,20 +70,16 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # ==========================================
-# 2. Database & Environment Setup (FIXED)
+# 2. Database & Environment Setup (FINAL FIX)
 # ==========================================
 load_dotenv(".env")
 DETA_KEY = os.getenv("DETA_KEY2")
 
-# Direct initialization for deta==0.2.52
-try:
-    # If the environment exposes it at the root module level
-    deta = deta_module.Deta(DETA_KEY)
-except AttributeError:
-    # If using the alternate legacy module mapping structure
-    import deta as legacy_module
-    deta = legacy_module.Deta(DETA_KEY)
+# Directly import from the internal source file where the engine lives
+from deta.main import Deta as DirectDeta
 
+# Initialize securely
+deta = DirectDeta(DETA_KEY)
 db = deta.Base("learnX_main_db")
 
 def insert_user(username, name, password):
