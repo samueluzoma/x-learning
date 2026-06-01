@@ -70,10 +70,23 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# 2. Database & Environment Setup
+# ==========================================
+# 2. Database & Environment Setup (UPDATED)
+# ==========================================
+import deta as deta_module  # Import the module safely under an alias
+from dotenv import load_dotenv
+
 load_dotenv(".env")
 DETA_KEY = os.getenv("DETA_KEY2")
-deta = Deta(DETA_KEY)
+
+# Use the module to initialize Deta to bypass the top-level import issue
+try:
+    deta = deta_module.Deta(DETA_KEY)
+except AttributeError:
+    # Fallback structure for the older legacy package initialization
+    from deta import deta as legacy_deta
+    deta = legacy_deta.Deta(DETA_KEY)
+
 db = deta.Base("learnX_main_db")
 
 def insert_user(username, name, password):
