@@ -70,16 +70,20 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# 2. Database & Environment Setup
+# ==========================================
+# 2. Database & Environment Setup (FIXED)
+# ==========================================
 load_dotenv(".env")
 DETA_KEY = os.getenv("DETA_KEY2")
 
-# This block handles the version conflict manually
+# Direct initialization for deta==0.2.52
 try:
+    # If the environment exposes it at the root module level
     deta = deta_module.Deta(DETA_KEY)
 except AttributeError:
-    from deta import deta as legacy_deta
-    deta = legacy_deta.Deta(DETA_KEY)
+    # If using the alternate legacy module mapping structure
+    import deta as legacy_module
+    deta = legacy_module.Deta(DETA_KEY)
 
 db = deta.Base("learnX_main_db")
 
