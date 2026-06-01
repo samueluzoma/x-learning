@@ -6,3 +6,4 @@ plotly
 requests
 streamlit-authenticator
 deta==0.2.52
+python-dotenv
